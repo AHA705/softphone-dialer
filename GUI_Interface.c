@@ -2,11 +2,6 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 
-#define TAP1_X 558
-#define TAP1_Y 500
-#define TAP2_X 540
-#define TAP2_Y 2200
-
 // Function to check if ADB is available
 int check_android_device() {
     // Check if adb is installed
@@ -48,16 +43,44 @@ void on_button_clicked(GtkWidget *widget, gpointer data) {
 }
 
 int main(int argc, char *argv[]) {
+    
+ // Declare variables to store the values read from the file
+    int TAP1_X, TAP1_Y, TAP2_X, TAP2_Y;
+
+    // Open the configuration file for reading
+    FILE *file = fopen("config.txt", "r");
+    if (file == NULL) {
+        perror("Error finding config.txt, please run setup");
+        return 1;
+    }
+
+    // Read each line from the file
+    char line[256];  // Buffer for each line
+    while (fscanf(file, "TAP1_X %d", &TAP1_X) == 1) {
+        // Successfully read TAP1_X
+    }
+    while (fscanf(file, "TAP1_Y %d", &TAP1_Y) == 1) {
+        // Successfully read TAP1_Y
+    }
+    while (fscanf(file, "TAP2_X %d", &TAP2_X) == 1) {
+        // Successfully read TAP2_X
+    }
+    while (fscanf(file, "TAP2_Y %d", &TAP2_Y) == 1) {
+        // Successfully read TAP2_Y
+    }
+
+    // Close the file
+    fclose(file);
     // Initialize GTK
     gtk_init(&argc, &argv);
 
     // Create a window
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), "ADB Check");
+    gtk_window_set_title(GTK_WINDOW(window), "Softphone-Dialer");
     gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
 
     // Create a button
-    GtkWidget *button = gtk_button_new_with_label("Check ADB Device");
+    GtkWidget *button = gtk_button_new_with_label("Dial number:");
 
     // Set up a container (box) and add the button to the window
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
