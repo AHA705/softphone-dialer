@@ -1,6 +1,10 @@
 # softphone-dialer
 [Softphone App link](https://play.google.com/store/apps/details?id=co.uk.voicehost.softphone.android&hl=en-US)
 
+Requirements:
+* Android Device
+* Linux PC
+
 Tested to work on Linux Fedora 40.
 
 [USB Debugging](https://www.lifewire.com/enable-usb-debugging-android-4690927)
