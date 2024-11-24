@@ -20,4 +20,5 @@ Program function: Every time you press "Enter"
 Open terminal, cd into the directory:
 
 ./setup
+
 ./CLI_Interface
