@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
+
 int check_linux_distribution(){
     char buffer[128];
     FILE *fp;
@@ -138,7 +139,48 @@ int check_device_connection(){
     return 0;
 }   
 
+void getCoordinates(int *x, int *y) {
+    // Read the two integers (x and y) from the user input
+    if (scanf("%d %d", x, y) != 2) {
+        printf("Invalid input. Please enter two integers.\n");
+    }
+}
+
+void saveToFile(int tap1_x, int tap1_y, int tap2_x, int tap2_y) {
+    // Open the file config.txt for writing
+    FILE *file = fopen("config.txt", "w");
+    if (file == NULL) {
+        printf("Error opening file for writing.\n");
+        return;
+    }
+
+    // Write the coordinates in the desired format
+    fprintf(file, "TAP1_X=%d\n", tap1_x);
+    fprintf(file, "TAP1_Y=%d\n", tap1_y);
+    fprintf(file, "TAP2_X=%d\n", tap2_x);
+    fprintf(file, "TAP2_Y=%d\n", tap2_y);
+
+    // Close the file
+    fclose(file);
+    printf("Coordinates saved to config.txt\n");
+}
+
 int update_tap_coords(){
+    int tap1_x, tap1_y, tap2_x, tap2_y;
+
+    // Get the first set of coordinates
+    printf("Enter the coordinates for the text box as x y: ");
+    getCoordinates(&tap1_x, &tap1_y);
+
+    // Get the second set of coordinates
+    printf("Enter the coordinates for the dialer x y: ");
+    getCoordinates(&tap2_x, &tap2_y);
+
+    // Save the coordinates to the file
+    saveToFile(tap1_x, tap1_y, tap2_x, tap2_y);
+
+    return 0;
+    /*
     int result;
     result = system("./Android_x_y.sh");
     if (result == -1) {
@@ -147,6 +189,7 @@ int update_tap_coords(){
     }
     printf("Updated config successfully\n");
     return 0;
+    */
 }
 
 int check_os(){
