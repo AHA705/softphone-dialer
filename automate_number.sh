@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export DISPLAY=:0
 # Define the coordinates (x, y) for the taps
 TAP1_X=$1
 TAP1_Y=$2
