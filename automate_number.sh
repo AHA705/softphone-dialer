@@ -1,32 +1,11 @@
 #!/bin/bash
 
 # Define the coordinates (x, y) for the taps
-TAP1_X=558
-TAP1_Y=500
+TAP1_X=$1
+TAP1_Y=$2
 
-TAP2_X=540
-TAP2_Y=2200
-
-# Function to check if ADB is available
-check_usb_debugging() {
-    # Check if ADB is available
-    if ! command -v adb &>/dev/null; then
-        echo "ADB is not installed. Please install ADB to check USB debugging status."
-        exit 1
-    fi
-
-    # Check if any devices are connected
-    adb devices | grep -q "device$"
-    
-    if ! [ $? -eq 0 ]; then
-        echo "No device found. Please ensure USB debugging is enabled and the device is connected."
-        
-    fi
-}
-
-# Call the function
-check_usb_debugging
-
+TAP2_X=$3
+TAP2_Y=$4
 
 # Function to clean the clipboard (remove all spaces and trailing whitespace)
 copyAndClean_clipboard() {
@@ -39,15 +18,9 @@ copyAndClean_clipboard() {
     fi
     
     # Check if the clipboard contains only numbers (possibly with spaces)
-    if [[ "$clipboard" =~ ^[0-9[:space:]]+$ ]]; then
+    if [[ "$clipboard" =~ ^[0-9[:space:]+]+$ ]]; then  # Allow the + sign
         # Remove all spaces and trailing whitespace
         cleaned_clipboard=$(echo "$clipboard" | tr -d '[:space:]' | sed 's/[[:space:]]*$//')
-        
-        # If clipboard content was changed, update the clipboard
-        if [[ "$clipboard" != "$cleaned_clipboard" ]]; then
-           echo "$cleaned_clipboard" | xclip -selection clipboard
-           # echo "Clipboard is valid and cleaned."
-        fi
     else
         echo "Error: Clipboard contains invalid content (non-numeric or invalid format)."
         exit 1
@@ -76,9 +49,6 @@ clear_input_field
 # Clean the clipboard before proceeding
 copyAndClean_clipboard
 
-# Get the cleaned clipboard text from the host machine (Linux example with xclip)
-CLIPBOARD_TEXT=$(xclip -o -selection clipboard)  # For Linux (xclip)
-
 # Function to simulate a tap on the screen
 tap() {
   local x=$1
@@ -101,26 +71,24 @@ press_escape() {
 
 # Main execution
 
-clear
-
 # Tap the first area to focus the input field
 #echo "Tapping at ($TAP1_X, $TAP1_Y)..."
-echo "Tapping number area"
+#echo "Tapping number area"
 tap $TAP1_X $TAP1_Y
 sleep 0.1  # Shorter wait time after tap
 
 # Type the clipboard content into the focused input field on Android
 #echo "Typing clipboard content into Android..."
-echo "Typing..."
-type_text "$CLIPBOARD_TEXT"
+#echo "Typing..."
+type_text "$cleaned_clipboard"
 
 # Press the ESCAPE key
-echo "Pressing ESCAPE..."
+#echo "Pressing ESCAPE..."
 press_escape
 sleep 0.2  # Shorter wait time for escape key press
 
 # Tap the second area
-echo "Calling..."
+last_four_digits="${cleaned_clipboard: -4}"
+echo "Calling... $last_four_digits"
 tap $TAP2_X $TAP2_Y
 
-echo "Done"

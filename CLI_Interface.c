@@ -1,7 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 // Function to check if ADB is available
+int TAP1_X, TAP1_Y, TAP2_X, TAP2_Y;
+
+int get_coord_value(const char* line) {
+    int value = 0;
+    // Try to extract the value after the '=' sign
+    if (sscanf(line, "%*[^=]=%d", &value) == 1) {
+        return value;
+    }
+    return -1; // Return -1 if parsing fails
+}
 
 int check_config(){
     FILE *file = fopen("config.txt", "r");
@@ -9,9 +21,31 @@ int check_config(){
         printf("Config not found, please run setup.\n");
         return 1;
     }
+    char line[30];
+     while (fgets(line, sizeof(line), file)) {
+        // Remove the newline character if it exists
+        line[strcspn(line, "\n")] = '\0';
+
+        // Check each line and assign values
+        if (strstr(line, "TAP1_X=")) {
+            TAP1_X = get_coord_value(line);
+        } else if (strstr(line, "TAP1_Y=")) {
+            TAP1_Y = get_coord_value(line);
+        } else if (strstr(line, "TAP2_X=")) {
+            TAP2_X = get_coord_value(line);
+        } else if (strstr(line, "TAP2_Y=")) {
+            TAP2_Y = get_coord_value(line);
+        }
+    }
+    if (TAP1_X == -1 || TAP1_Y == -1 || TAP2_X == -1 || TAP2_Y == -1) {
+        fprintf(stderr, "Error: One or more coordinates are missing or invalid in config.txt\n");
+        return 1;
+    }
     fclose(file);
     return 0;
 }
+
+
 int check_android_device() {
     
     if (system("command -v adb > /dev/null 2>&1") != 0) {
@@ -32,9 +66,9 @@ int check_android_device() {
     while (fgets(buffer, sizeof(buffer), fp) == NULL) {
         printf("No device found. Please ensure USB debugging is enabled and the device is connected.\n");
         printf("Press Enter to retry...\n");
-
         // Wait for the user to press Enter before retrying
         getchar(); 
+        sleep(1);
 
         // Reopen the pipe to retry the command
         fclose(fp);  // Close the old file pointer
@@ -70,7 +104,8 @@ int main() {
 
     // Check if ADB is available and a device is connected
     if(check_config() != 0){exit(1);}
-    
+
+
     printf("\033[1mChecking if device is detected: \033[0m");
 
     if (check_android_device() != 0){exit(1);}
@@ -81,12 +116,15 @@ int main() {
         printf("automate_number.sh is missing from working directory!\n");
         exit(1);
     }
+     // Create the command string with arguments
+    char command[256];  // Ensure enough space for the command string
+    snprintf(command, sizeof(command), "./automate_number.sh %d %d %d %d", TAP1_X, TAP1_Y, TAP2_X, TAP2_Y);
 
     printf("\033[1mProgram is ready, press enter to dial the number in the clipboard or CTRL + C to exit: \n\033[0m");
     while(1){
         printf("Awaiting Enter key: \n");
         getchar();
-        int result = system("./automate_number.sh");
+        int result = system(command);
     }
     return 0;
 }
