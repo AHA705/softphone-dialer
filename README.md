@@ -4,11 +4,13 @@
 Tested to work on Linux Fedora 40.
 
 [USB Debugging](https://www.lifewire.com/enable-usb-debugging-android-4690927)
+
 In developer options scroll down and find pointer location, you'll need to find the x,y of the text box and the dialer. you'll be asked for it in the setup checks. on Pixel 7 the coords are:
-TAP1_X=558
-TAP1_Y=500
-TAP2_X=540
-TAP2_Y=2200
+
+* TAP1_X=558
+* TAP1_Y=500
+* TAP2_X=540
+* TAP2_Y=2200
 
 Run setup for first time then run CLI Interface.
 
